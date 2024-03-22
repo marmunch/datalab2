@@ -1,181 +1,165 @@
-package Binary;
+package List;
 
 public class Set {
 
-    private int start;  // область определения множества
-    private int end;
-    private int[] mass;  // массив для хранения
-    final private int SIZE = 10;  // размер массива
+    private Node tail; // хвост
 
-    // конструктор
-    public Set (int start, int end) {
+    private class Node {
 
-        this.start = start;
-        this.end = end;
+        private int element; // объект
+        private Node next; // ссылка на следующий
 
-        mass = new int[SIZE];
-        for (int i=0; i<SIZE; i++) {
-            mass[i] = 0;
+        // конструктор по Set
+        private Node(int element, Node next) {
+
+            this.element = element;
+            this.next = next;
+        }
+
+        // печать
+        private void print() {
+
+            if (element != 0) System.out.println(element);
+            else System.out.println("Set is null");
         }
     }
 
-    // копирующий конструктор
-    public Set (Set copy) {
+    // конструктор
+    public Set() {
+        tail = null;
+    }
 
-        this.start = copy.start;
-        this.end = copy.end;
+    // копирующий
+    public Set(Set copy) {
 
-        mass = new int[SIZE];
-        for (int i=0; i<SIZE; i++) {
-            mass[i] = copy.mass[i];
+        this.tail = new Node(copy.tail.element, copy.tail.next);
+        Node currentCopy = copy.tail.next;
+        Node current = tail;
+
+        while (currentCopy != copy.tail) {
+            current.next = new Node(currentCopy.element, currentCopy);
+            currentCopy = currentCopy.next;
+            current = current.next;
         }
     }
 
     // объединение множеств
     public Set union(Set B) {
         /*
-        указатель Аset на this и Bset на B
-        если b.start < a.start поменять указатели
+        создаем множество результата
 
-        создать множество результат Set C = new Set(min, max)
-        копия Aset с коррекцией по 0
+        пока не дойдет до головы A
+            если элемент А меньше либо равен В - добавить
+            иначе добавить В
+            если A < B A.next
+            иначе B.next
 
-        с 0 до позиции Bset.start в С или до конца Aset
-            копировать в C Aset
+        пока А не head
+            добавить А
 
-        с позиции Bset.start в С до позиции Math.min(end) в С
-            С[i] = Aset_copy[i-Bset.start] | Bset[i-Bset.start]
-
-        если b.end > a.end
-            с Math.min(end) до B.length копировать в С
-        иначе
-            с Math.min(end) до А.length копировать в С
-
-        вернуть множество С
+        пока B не head
+            добавить B
+            
+        вернуть результат
          */
-
-        Set C = new Set(Math.min(this.start, B.start), Math.max(this.end, B.end));
-
-        return C;
     }
 
     // пересечение множеств
     public Set intersection(Set B) {
         /*
-        указатель Аset на this и Bset на B
-        если b.start < a.start поменять указатели
-
-        создать множество результат Set C = new Set(min, max)
-        копия Aset с коррекцией по 0
-
-        с Aset.start до Math.min(end)
-            С[i] = Aset_copy[i] & Bset[i]
-
-        вернуть множество С
+        создаем множество результата
+        пока не дойдет до головы
+            если элемент А равен В - добавить A
+            если A <= B A.next
+            иначе B.next
+        вернуть результат
          */
 
-        Set C = new Set(Math.min(this.start, B.start), Math.max(this.end, B.end));
-
-        return C;
     }
 
     // разница множеств
     public Set difference(Set B) {
         /*
-        указатель Аset на this и Bset на B
-        если b.start < a.start поменять указатели
-
-        создать множество результат Set C = new Set(min, max)
-        копия Aset с коррекцией по 0
-
-        с 0 до позиции Bset.start в С или до конца Aset
-            копировать в C Aset
-
-        с позиции Bset.start в С до позиции Math.min(end) в С
-            С[i] = Aset_copy[i-Bset.start] & (~Bset[i-Bset.start])
-
-        с Math.min(end) до А.length копировать в С
-
-        вернуть множество С
+        создаем множество результата
+        пока не дойдет до головы
+            если элемент А != В - добавить A
+            если A < B A.next
+            иначе B.next
+        пока А не head
+            добавить А
+        вернуть результат
          */
-        
-        Set C = new Set(Math.min(this.start, B.start), Math.max(this.end, B.end));
-        C.mass = this.copyMove();
-
-        for (int i = 0; i < B.mass.length(); i++) {
-            C.mass[i] = C.mass[i] & (~B.mass[i]);
-        }
-
-        return C;
     }
 
     // объединение множеств, не имеющих общих элементов
     public Set merge(Set B) {
         /*
         проверка на пересечения
-            выбросить исключение если они есть
+            выбросить искллючение если они есть
 
-        указатель Аset на this и Bset на B
-        если b.start < a.start поменять указатели
-
-        создать множество результат Set C = new Set(min, max)
-        копия Aset с коррекцией по 0
-
-        с 0 до конца Aset
-            копировать в C Aset
-
-        если b.end > a.end
-            с Math.min(end) до B.length копировать в С
-        иначе
-            с Math.min(end) до А.length копировать в С
-
-        вернуть множество С
+        создаем множество результата
+        пока не дойдет до головы A
+            если элемент А меньше либо равен В - добавить
+            иначе добавить В
+            если A < B A.next
+            иначе B.next
+        пока А не head
+            добавить А
+        пока B не head
+            добавить B
+        вернуть результат
          */
+
     }
 
     // находится ли x в A
-    public boolean member(int x) {
+    public boolean member(Set x) {
         /*
-        если x за границами области, вернуть false
-
-        ifMember()
+        пока не дойдет до головы
+            если элемент А == x вернуть true
+        вернуть false
          */
     }
 
     // опустошить
     public void makenull() {
-        /*
-        с начала до конца массива сделать все числа 0
-         */
+        tail = null;
     }
 
     // вставить элемент в множество
     public void insert(int x) {
         /*
-        найти элемент массива, в который вставить
-        Position pos = new Position(x)
-        mass[pos.pos] = mass[pos.pos] | x
+        проверка на пустоту
+            добавить в tail
+
+        lastnode = tail.next
+        current = lastnode.next
+        пока не дойдет до головы
+            если x > элемента сделать addElement(x, lastnode)
+            сохранять предыдущий
          */
+
     }
 
     // удалить элемент из множества
     public void delete(int x) {
         /*
-        найти элемент массива, в который вставить
-        Position pos = new Position(x)
-        mass[pos.pos] = mass[pos.pos] & (~x)
+        проверка на последний элемент
+            tail = null
+        
+        lastnode = tail.next
+        current = lastnode.next
+        пока не дойдет до головы
+            если x == элемент сделать node.next = node.next.next
+            return
          */
+
     }
 
-    // this присвоить B
+    // B присвоить A
     public void assign(Set B) {
         /*
-        проверить что this и B не один объект
-        проверить размеры
-            выделить память для this если они не равны
-        присвоить новые значения старт и энд
-        цикл с 0 до конца
-            перенести число с B в This
+        проверка на неодинаковость элементов isInter()
 
         копирующий конструктор
          */
@@ -184,75 +168,39 @@ public class Set {
     // равенство (те же элементы)
     public boolean equal(Set B) {
         /*
-        если длины не равны вернуть false
-        совместить нули
-        цикл с 0 до конца
-            если элементы не равны, вернуть false
-        вернуть true
-         */
-    }
-
-    // вернуть имя множества в котором есть x
-    public String find(Set B, int x) {
-        /*
-        проверить, что множества не пересекаются
-        ifMember(A) вернуть А
-        ifMember(В) вернуть В
-        вернуть "-" если элемента нет нигде
+        пока не дойдет до головы
+            если a != b return false
+        return true
          */
     }
 
     // проверка на пересечение множеств
     public boolean isInter(Set B) {
         /*
-        совместить нули
-        проверка на совпадение чисел в цикле с 0 до конца
-            если this != B вернуть false
-        вернуть true
+        пока A не голова
+            если A == B return true
+            если A > B A.next Acount++
+            иначе B.next Bcount++
+        return (Acount == Bcount)
          */
     }
 
-    // метод, для проверки нахождения в множестве
-    private boolean ifMember(int x) {
-        /*
-        если x за границами, вернуть false
+    // добавить элемент
+    private void addElement(int el, Node node) {
 
-        найти элемент массива, в который вставить
-        Position pos = new Position(x)
-        вернуть побитовое И между x и mass[pos.pos]
-         */
-    }
-
-    // создание копии массива со сдвигом (скорректировать 0)
-    private int[] copyMove(Set B) {
-        /*
-        копируем This в A
-        temp = 0
-        до конца массива A
-            копируем темп в i элемент
-            A[i] сдвигаем влево на модуль (A.start - B.start)
-            temp = this[i] >> модуль(32 - (A.start - B.start))
-        вернуть A
-         */
-    }
-
-    //вывод
-    public void print() {
-
-        for (int j : mass) {
-            System.out.println(Integer.toBinaryString(j));
+        // вставка в пустой список
+        if (tail == null) {
+            tail = new Node(el, null);
+            tail.next = tail;
+            return;
         }
-    }
-
-    private class Position {
-
-        int pos;
-
-        private Position(Set set, int position) {
-            /*
-            скорректировать 0 (0/32 = 0 всегда), если x = 0 то прибавлять к pos +1
-            set.pos = (abs(set.start) + x)/32
-             */
+        // в хвост
+        if (node == tail) {
+            Node head = tail.next;
+            tail.next = new Node(el, head);
+            tail = tail.next;
         }
+        // общий случай
+        node = new Node(el, node);
     }
 }
