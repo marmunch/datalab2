@@ -25,49 +25,88 @@ public class Set {
         this.start = copy.start;
         this.end = copy.end;
 
-        int max = copy.end/32;
-        mass = new int[max];
-        for(int i=0; i<max; i++) {
-            mass[i] = 0;
+        mass = new int[SIZE];
+        for (int i=0; i<SIZE; i++) {
+            mass[i] = copy.mass[i];
         }
     }
 
     // объединение множеств
     public Set union(Set B) {
         /*
-        условное выражение для определения start и end
-        int[] A = copyMove()
-        до копирование
-        до конца массива
-            С[i] = A[i] | B[i]
-        после копирование
+        указатель Аset на this и Bset на B
+        если b.start < a.start поменять указатели
+
+        создать множество результат Set C = new Set(min, max)
+        копия Aset с коррекцией по 0
+
+        с 0 до позиции Bset.start в С или до конца Aset
+            копировать в C Aset
+
+        с позиции Bset.start в С до позиции Math.min(end) в С
+            С[i] = Aset_copy[i-Bset.start] | Bset[i-Bset.start]
+
+        если b.end > a.end
+            с Math.min(end) до B.length копировать в С
+        иначе
+            с Math.min(end) до А.length копировать в С
+
         вернуть множество С
          */
+
+        Set C = new Set(Math.min(this.start, B.start), Math.max(this.end, B.end));
+
+        return C;
     }
 
     // пересечение множеств
     public Set intersection(Set B) {
         /*
-        создать множество(функция)
-        int[] A = copyMove()
-        выделить общую часть
-        до конца массива
-            С[i] = A[i] & B[i]
+        указатель Аset на this и Bset на B
+        если b.start < a.start поменять указатели
+
+        создать множество результат Set C = new Set(min, max)
+        копия Aset с коррекцией по 0
+
+        с Aset.start до Math.min(end)
+            С[i] = Aset_copy[i] & Bset[i]
+
         вернуть множество С
          */
+
+        Set C = new Set(Math.min(this.start, B.start), Math.max(this.end, B.end));
+
+        return C;
     }
 
     // разница множеств
     public Set difference(Set B) {
         /*
-        создать множество(функция)
-        int[] A = copyMove()
-        скопировать до и после
-        в общей части
-        до конца массива
-            С[i] = A[i] & (~B[i])
+        указатель Аset на this и Bset на B
+        если b.start < a.start поменять указатели
+
+        создать множество результат Set C = new Set(min, max)
+        копия Aset с коррекцией по 0
+
+        с 0 до позиции Bset.start в С или до конца Aset
+            копировать в C Aset
+
+        с позиции Bset.start в С до позиции Math.min(end) в С
+            С[i] = Aset_copy[i-Bset.start] & (~Bset[i-Bset.start])
+
+        с Math.min(end) до А.length копировать в С
+
         вернуть множество С
          */
+        
+        Set C = new Set(Math.min(this.start, B.start), Math.max(this.end, B.end));
+        C.mass = this.copyMove();
+
+        for (int i = 0; i < B.mass.length(); i++) {
+            C.mass[i] = C.mass[i] & (~B.mass[i]);
+        }
+
+        return C;
     }
 
     // объединение множеств, не имеющих общих элементов
@@ -76,12 +115,20 @@ public class Set {
         проверка на пересечения
             выбросить исключение если они есть
 
-        создать множество результат
-        int[] A = copyMove()
-        до копирование
-        до конца массива
-            С[i] = A[i] | B[i]
-        после копирование
+        указатель Аset на this и Bset на B
+        если b.start < a.start поменять указатели
+
+        создать множество результат Set C = new Set(min, max)
+        копия Aset с коррекцией по 0
+
+        с 0 до конца Aset
+            копировать в C Aset
+
+        если b.end > a.end
+            с Math.min(end) до B.length копировать в С
+        иначе
+            с Math.min(end) до А.length копировать в С
+
         вернуть множество С
          */
     }
@@ -106,9 +153,8 @@ public class Set {
     public void insert(int x) {
         /*
         найти элемент массива, в который вставить
-            скорректировать 0 (0/32 = 0 всегда), если x = 0 то прибавлять к pos +1
-            pos = (abs(this.start) + x)/32
-        mass[pos] = mass[pos] | x
+        Position pos = new Position(x)
+        mass[pos.pos] = mass[pos.pos] | x
          */
     }
 
@@ -116,9 +162,8 @@ public class Set {
     public void delete(int x) {
         /*
         найти элемент массива, в который вставить
-            скорректировать 0 (0/32 = 0 всегда), если x = 0 то прибавлять к pos +1
-            pos = (abs(this.start) + x)/32
-        mass[pos] = mass[pos] & (~x)
+        Position pos = new Position(x)
+        mass[pos.pos] = mass[pos.pos] & (~x)
          */
     }
 
@@ -127,10 +172,10 @@ public class Set {
         /*
         проверить что this и B не один объект
         проверить размеры
-            выделить память
+            выделить память для this если они не равны
         присвоить новые значения старт и энд
         цикл с 0 до конца
-            перенести каждое число с This в B
+            перенести число с B в This
 
         копирующий конструктор
          */
@@ -153,27 +198,17 @@ public class Set {
         проверить, что множества не пересекаются
         ifMember(A) вернуть А
         ifMember(В) вернуть В
-        вернуть - если элемента нет нигде
+        вернуть "-" если элемента нет нигде
          */
     }
 
     // проверка на пересечение множеств
     public boolean isInter(Set B) {
         /*
-        если длина не равна, то множества заведомо разные, вернуть false
         совместить нули
-        при равной длине проверка на совпадение чисел в цикле с 0 до конца
+        проверка на совпадение чисел в цикле с 0 до конца
             если this != B вернуть false
         вернуть true
-         */
-    }
-
-    // удалить
-    private Set createSet(Set B) {
-        /*
-        минимум и максимум сделать равными как у B
-        сравнить их с this и если надо поменять
-        вернуть Set(min, max)
          */
     }
 
@@ -182,15 +217,14 @@ public class Set {
         /*
         если x за границами, вернуть false
 
-        найти элемент массива, в который
-            скорректировать 0 (0/32 = 0 всегда), если x = 0 то прибавлять к pos +1
-            pos = (abs(this.start) + x)/32
-        вернуть побитовое И между x и mass[pos]
+        найти элемент массива, в который вставить
+        Position pos = new Position(x)
+        вернуть побитовое И между x и mass[pos.pos]
          */
     }
 
-    // создание копии массива
-    private int[] copyMove() {
+    // создание копии массива со сдвигом (скорректировать 0)
+    private int[] copyMove(Set B) {
         /*
         копируем This в A
         temp = 0
@@ -212,5 +246,13 @@ public class Set {
 
     private class Position {
 
+        int pos;
+
+        private Position(Set set, int position) {
+            /*
+            скорректировать 0 (0/32 = 0 всегда), если x = 0 то прибавлять к pos +1
+            set.pos = (abs(set.start) + x)/32
+             */
+        }
     }
 }
